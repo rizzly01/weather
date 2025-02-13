@@ -6,10 +6,10 @@ API_KEY = "57e00c15d85b13d67a6f52afdd0f3377"  # Replace with your OpenWeatherMap
 BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 # App Title
-st.title("Weather App")
+st.title("🌤️ Weather Finder")
 
 # User Input for City Name
-city = st.text_input("Enter City Name:")
+city = st.text_input("Enter the city name:")
 
 # Function to fetch weather data
 def get_weather(city):
@@ -32,6 +32,23 @@ def get_weather(city):
         st.error("Unable to fetch data. Please try again later.")
         return None
 
+# Function to get weather icon based on condition
+def get_weather_icon(condition):
+    icons = {
+        'Clear': '☀️',
+        'Clouds': '☁️',
+        'Rain': '🌧️',
+        'Drizzle': '🌦️',
+        'Thunderstorm': '⛈️',
+        'Snow': '❄️',
+        'Mist': '🌫️',
+        'Smoke': '🌫️',
+        'Haze': '🌫️',
+        'Dust': '🌫️',
+        'Fog': '🌫️',
+    }
+    return icons.get(condition, '🌈')
+
 # Show the weather data when the button is clicked
 if city:
     weather_data = get_weather(city)
@@ -41,8 +58,13 @@ if city:
         temp = weather_data['main']['temp']
         humidity = weather_data['main']['humidity']
         description = weather_data['weather'][0]['description']
+        main_weather = weather_data['weather'][0]['main']
         
-        # Display weather data
+        # Get weather icon
+        icon = get_weather_icon(main_weather)
+        
+        # Display weather data with icon
+        st.write(f"**Weather Icon:** {icon}")
         st.write(f"**Temperature:** {temp}°C")
         st.write(f"**Humidity:** {humidity}%")
         st.write(f"**Description:** {description.title()}")
