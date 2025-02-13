@@ -101,6 +101,11 @@ st.markdown("""
         padding: 15px;
         margin: 10px 0;
     }
+
+    /* Output Text Styling */
+    .output-text {
+        color: black;  /* Make the text black for visibility */
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -177,10 +182,10 @@ if city:
         icon = get_weather_icon(main_weather)
         temp = weather_data['main']['temp']
         st.markdown(f"""
-            <div style='text-align: center; padding: 20px;'>
+            <div style='text-align: center; padding: 20px;' class="output-text">
                 <span style='font-size: 5em;'>{icon}</span>
                 <h2 style='font-size: 3em; margin: 0;'>{temp}°C</h2>
-                <p style='font-size: 1.5em; color: #666;'>{weather_data['weather'][0]['description'].title()}</p>
+                <p style='font-size: 1.5em; color: #696;'>{weather_data['weather'][0]['description'].title()}</p>
             </div>
         """, unsafe_allow_html=True)
         
@@ -249,15 +254,14 @@ if city:
         
         # Timestamp
         st.markdown(f"""
-            <div style='text-align: center; color: #666; padding: 10px;'>
+            <div style='text-align: center; color: #666; padding: 10px;' class="output-text">
                 Last updated: {datetime.now().strftime('%I:%M %p')}
             </div>
         """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
-    <div style='text-align: center; color: #666; padding: 20px; font-size: 0.8em;'>
+    <div style='text-align: center; color: #666; padding: 20px; font-size: 0.8em;' class="output-text">
         Powered by OpenWeatherMap API<br>
-    
     </div>
 """, unsafe_allow_html=True)
