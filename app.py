@@ -1,57 +1,151 @@
 import streamlit as st
 import requests
+from datetime import datetime
 
-# Custom CSS styling
+# Custom CSS with more modern styling
 st.markdown("""
     <style>
-    .title {
-        color: #2c3e50;
-        text-align: center;
-        padding: 20px;
-        font-size: 3em;
-        font-weight: bold;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    
+    /* Main Container */
+    .main {
+        font-family: 'Poppins', sans-serif;
+        padding: 15px;
     }
     
-    .weather-info {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin: 20px 0;
-    }
-    
-    .metric {
-        font-size: 1.2em;
-        color: #34495e;
-        margin: 10px 0;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .stButton > button {
-        background-color: #3498db;
+    /* Title Styles */
+    .weather-title {
+        background: linear-gradient(120deg, #2980b9, #8e44ad);
         color: white;
-        width: 100%;
-        padding: 10px 20px;
-        border-radius: 5px;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Search Box */
+    .stTextInput > div > div > input {
+        font-family: 'Poppins', sans-serif;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        background: #f8f9fa;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #2980b9;
+        box-shadow: 0 0 0 2px rgba(41,128,185,0.2);
+    }
+    
+    /* Weather Card */
+    .weather-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        margin: 20px 0;
+        transition: transform 0.3s ease;
+    }
+    
+    .weather-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    /* Weather Metrics */
+    .metric {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+    
+    .metric:hover {
+        background: #e9ecef;
+        transform: scale(1.02);
+    }
+    
+    .metric-icon {
+        font-size: 24px;
+        margin-right: 10px;
+    }
+    
+    /* Button Style */
+    .stButton > button {
+        background: linear-gradient(120deg, #2980b9, #8e44ad);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 10px;
         border: none;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Alert Styles */
+    .stAlert {
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("<h1 class='title'>📍 Weather Checker</h1>", unsafe_allow_html=True)
+# App title
+st.markdown("<h1 class='weather-title'>🌈 Weather Wizard</h1>", unsafe_allow_html=True)
 
-# Input for city name
-city = st.text_input("Enter City Name", placeholder="Example: London")
+# API Configuration
+API_KEY = "57e00c15d85b13d67a6f52afdd0f3377"  # Replace with your OpenWeatherMap API key
+BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
 
-# Your API key (replace with your actual API key)
-API_KEY = "57e00c15d85b13d67a6f52afdd0f3377"  # Replace this with your OpenWeatherMap API key
+def get_weather_icon(condition):
+    icons = {
+        'Clear': '☀️',
+        'Clouds': '☁️',
+        'Rain': '🌧️',
+        'Drizzle': '🌦️',
+        'Thunderstorm': '⛈️',
+        'Snow': '❄️',
+        'Mist': '🌫️',
+        'Smoke': '🌫️',
+        'Haze': '🌫️',
+        'Dust': '🌫️',
+        'Fog': '🌫️',
+    }
+    return icons.get(condition, '🌈')
+
+def get_time_greeting():
+    hour = datetime.now().hour
+    if 5 <= hour < 12:
+        return "Good Morning! ☀️"
+    elif 12 <= hour < 17:
+        return "Good Afternoon! 🌞"
+    elif 17 <= hour < 21:
+        return "Good Evening! 🌅"
+    else:
+        return "Good Night! 🌙"
+
+# City input with better styling
+city = st.text_input("", placeholder="Enter your city name...", help="Type your city name and press Enter")
 
 def get_weather(city):
     try:
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-        response = requests.get(url)
+        params = {
+            'q': city,
+            'appid': API_KEY,
+            'units': 'metric'
+        }
+        response = requests.get(BASE_URL, params=params)
         data = response.json()
         
         if response.status_code == 200:
@@ -61,53 +155,106 @@ def get_weather(city):
             return None
             
     except Exception as e:
-        st.error("Something went wrong! Please try again.")
+        st.error("Unable to connect to weather service. Please try again later.")
         return None
 
-# Button to get weather
-if st.button("Check Weather") and city:
+if city:
     weather_data = get_weather(city)
     
     if weather_data:
-        # Display weather information
-        st.markdown("<div class='weather-info'>", unsafe_allow_html=True)
+        # Weather card container
+        st.markdown("<div class='weather-card'>", unsafe_allow_html=True)
         
-        # City name and country
-        country = weather_data['sys']['country']
-        st.markdown(f"<h2 style='text-align: center;'>Weather in {city}, {country}</h2>", unsafe_allow_html=True)
+        # Greeting and location
+        st.markdown(f"<h2 style='text-align: center;'>{get_time_greeting()}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align: center; color: #2c3e50;'>📍 {city.title()}, {weather_data['sys']['country']}</h3>", unsafe_allow_html=True)
         
-        # Create two columns
+        # Main weather display
+        main_weather = weather_data['weather'][0]['main']
+        icon = get_weather_icon(main_weather)
+        temp = weather_data['main']['temp']
+        st.markdown(f"""
+            <div style='text-align: center; padding: 20px;'>
+                <span style='font-size: 5em;'>{icon}</span>
+                <h2 style='font-size: 3em; margin: 0;'>{temp}°C</h2>
+                <p style='font-size: 1.5em; color: #666;'>{weather_data['weather'][0]['description'].title()}</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Create three columns for metrics
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown(f"""
+                <div class='metric'>
+                    <span class='metric-icon'>💧</span>
+                    <div>
+                        <strong>Humidity</strong><br>
+                        {weather_data['main']['humidity']}%
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with col2:
+            st.markdown(f"""
+                <div class='metric'>
+                    <span class='metric-icon'>🌡️</span>
+                    <div>
+                        <strong>Feels Like</strong><br>
+                        {weather_data['main']['feels_like']}°C
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        with col3:
+            st.markdown(f"""
+                <div class='metric'>
+                    <span class='metric-icon'>💨</span>
+                    <div>
+                        <strong>Wind Speed</strong><br>
+                        {weather_data['wind']['speed']} m/s
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+        # Additional metrics
         col1, col2 = st.columns(2)
         
         with col1:
-            # Temperature
-            temp = weather_data['main']['temp']
-            st.markdown(f"<div class='metric'>🌡️ Temperature: {temp}°C</div>", unsafe_allow_html=True)
-            
-            # Weather description
-            description = weather_data['weather'][0]['description']
-            st.markdown(f"<div class='metric'>☁️ Condition: {description.title()}</div>", unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class='metric'>
+                    <span class='metric-icon'>⬆️</span>
+                    <div>
+                        <strong>Max Temp</strong><br>
+                        {weather_data['main']['temp_max']}°C
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
             
         with col2:
-            # Humidity
-            humidity = weather_data['main']['humidity']
-            st.markdown(f"<div class='metric'>💧 Humidity: {humidity}%</div>", unsafe_allow_html=True)
-            
-            # Wind Speed
-            wind_speed = weather_data['wind']['speed']
-            st.markdown(f"<div class='metric'>🌪️ Wind: {wind_speed} m/s</div>", unsafe_allow_html=True)
-            
-        # Additional info
-        feels_like = weather_data['main']['feels_like']
-        st.markdown(f"<div class='metric'>🌡️ Feels like: {feels_like}°C</div>", unsafe_allow_html=True)
+            st.markdown(f"""
+                <div class='metric'>
+                    <span class='metric-icon'>⬇️</span>
+                    <div>
+                        <strong>Min Temp</strong><br>
+                        {weather_data['main']['temp_min']}°C
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
         
         st.markdown("</div>", unsafe_allow_html=True)
-elif city:
-    st.info("Please enter a city name to check the weather!")
+        
+        # Timestamp
+        st.markdown(f"""
+            <div style='text-align: center; color: #666; padding: 10px;'>
+                Last updated: {datetime.now().strftime('%I:%M %p')}
+            </div>
+        """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
-    <div style='text-align: center; color: #7f8c8d; padding: 20px;'>
-        Weather data provided by OpenWeatherMap
+    <div style='text-align: center; color: #666; padding: 20px; font-size: 0.8em;'>
+        Powered by OpenWeatherMap API<br>
+        Made with ❤️ using Streamlit
     </div>
 """, unsafe_allow_html=True)
