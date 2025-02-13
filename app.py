@@ -5,14 +5,12 @@ from datetime import datetime
 # Custom CSS with more modern styling
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    
     /* Main Container */
     .main {
         font-family: 'Poppins', sans-serif;
         padding: 15px;
     }
-    
+
     /* Title Styles */
     .weather-title {
         background: linear-gradient(120deg, #2980b9, #8e44ad);
@@ -23,7 +21,7 @@ st.markdown("""
         margin-bottom: 25px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    
+
     /* Search Box */
     .stTextInput > div > div > input {
         font-family: 'Poppins', sans-serif;
@@ -33,13 +31,18 @@ st.markdown("""
         background: #f8f9fa;
         font-size: 16px;
         transition: all 0.3s ease;
+        color: #333333;  /* Dark color for input text */
     }
-    
+
+    .stTextInput > div > div > input::placeholder {
+        color: #555555;  /* Light grey color for placeholder text */
+    }
+
     .stTextInput > div > div > input:focus {
         border-color: #2980b9;
         box-shadow: 0 0 0 2px rgba(41,128,185,0.2);
     }
-    
+
     /* Weather Card */
     .weather-card {
         background: white;
@@ -49,11 +52,11 @@ st.markdown("""
         margin: 20px 0;
         transition: transform 0.3s ease;
     }
-    
+
     .weather-card:hover {
         transform: translateY(-5px);
     }
-    
+
     /* Weather Metrics */
     .metric {
         background: #f8f9fa;
@@ -64,17 +67,17 @@ st.markdown("""
         align-items: center;
         transition: all 0.3s ease;
     }
-    
+
     .metric:hover {
         background: #e9ecef;
         transform: scale(1.02);
     }
-    
+
     .metric-icon {
         font-size: 24px;
         margin-right: 10px;
     }
-    
+
     /* Button Style */
     .stButton > button {
         background: linear-gradient(120deg, #2980b9, #8e44ad);
@@ -86,12 +89,12 @@ st.markdown("""
         width: 100%;
         transition: all 0.3s ease;
     }
-    
+
     .stButton > button:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
-    
+
     /* Alert Styles */
     .stAlert {
         border-radius: 10px;
@@ -255,6 +258,6 @@ if city:
 st.markdown("""
     <div style='text-align: center; color: #666; padding: 20px; font-size: 0.8em;'>
         Powered by OpenWeatherMap API<br>
-        Made with ❤️ using Streamlit
+    
     </div>
 """, unsafe_allow_html=True)
